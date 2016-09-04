@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using System.ComponentModel;
 using System.IO;
+
+
 
 namespace ls
 {
@@ -14,7 +13,6 @@ namespace ls
         static void Main(string[] args)
         {
             List<string> elements = new List<string>();
-
 
 
             Directory.GetFiles(Environment.CurrentDirectory).Select(Path.GetFileName)
@@ -33,42 +31,29 @@ namespace ls
 
             foreach (string element in elements)
             {
-                Console.Write("{0} {1} ", Directory.GetLastWriteTime(element).ToLocalTime().ToString("MM/dd/yyyy hh:mm tt"), IsDirectory(element) );
-                ChangeColor(element);
-
+                Console.Write(DateTime.Now.ToShortDateString() + "   ");
+                string time = Directory.GetLastWriteTime(element).ToShortTimeString() + "   ";
+                if (time.Length != 8)
+                {
+                    Console.Write(time.Insert(0, "0"));
+                }
+                else {
+                    Console.Write(time);
+                }
+                if ((File.GetAttributes(element) & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    Console.Write(" <DIR>   ");
+                }
+                else {
+                    Console.Write("         ");
+                }
+                if ((File.GetAttributes(element) & FileAttributes.Directory) == FileAttributes.Directory)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                }
+                Console.WriteLine(element);
+                Console.ResetColor();
             }
-
-
-        }
-        public static string IsDirectory(string element)
-        {
-            FileAttributes attr = File.GetAttributes(element);
-            string msg = "";
-            int fileCounter = 0;
-            int directoryCounter = 0;
-
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-            {
-                directoryCounter++;
-                msg = "<DIR> ";
-            }
-            else {
-                fileCounter++;
-                msg = "      ";
-            }
-            return msg;
-        }
-
-        public static void ChangeColor(string element)
-        {
-            FileAttributes attr = File.GetAttributes(element);
-            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-            }
-
-            Console.WriteLine(element);
-            Console.ResetColor();
         }
     }
 }
